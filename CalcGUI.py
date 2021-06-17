@@ -112,7 +112,9 @@ class CalcUI(QMainWindow):
 				self.display.setText(temp_num)
 
 	def op_clicked(self, op):
-		if len(self.currentNum) != 0:
+		if not self.currentNum:
+			self.finNum.append("0"+op)
+		else:
 			temp_num = ''.join(self.currentNum) + op
 			self.finNum.append(temp_num)
 			self.currentNum = []
@@ -124,6 +126,8 @@ class CalcUI(QMainWindow):
 		else:
 			temp_num = ''.join(self.finNum) + ''.join(self.currentNum)
 			try:
+				if ("0/" or "0/0") in self.finNum:
+					raise ZeroDivisionError
 				answer = str(eval(temp_num))
 				#Clear results in both lists and save answer in currentNum list
 				self.clear()
