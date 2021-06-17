@@ -89,10 +89,8 @@ class CalcUI(QMainWindow):
 		self.container.addLayout(self.keypad)
 
 	#Functionality of calculator
-
 	def num_clicked(self, num):
 		#Do not display or count leading zeroes
-		print(len(self.currentNum))
 		if len(self.currentNum) == 1 and self.currentNum[0] == '0' and num == '0': 
 			self.display.setText('0')
 			self.currentNum = []
@@ -111,7 +109,9 @@ class CalcUI(QMainWindow):
 	def op_clicked(self, op):
 		if len(self.currentNum) == 0:
 			self.finNum.append('0'+op)
+			print(self.currentNum)
 		else:
+			print(self.finNum)
 			temp_num = ''.join(self.currentNum) + op
 			self.finNum.append(temp_num)
 			self.currentNum = []
@@ -130,12 +130,20 @@ class CalcUI(QMainWindow):
 				self.clear()
 				self.currentNum.append(answer)
 				self.display.setText(answer)
+
 			except ZeroDivisionError:
 				self.display.setText("Cannot divide by zero")
 				self.finNum = []
 				self.currentNum =[]
-				
 
+			except SyntaxError:
+				#Removes the operator at the end and performs the calculation with the answer
+				temp_ans = temp_num + temp_num[:len(temp_num)-1]
+				answer = str(eval(temp_ans))
+				self.clear()
+				self.currentNum.append(answer)
+				self.display.setText(answer)
+				
 	def clear(self):
 		self.finNum = []
 		self.currentNum =[]
