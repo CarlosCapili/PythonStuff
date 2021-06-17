@@ -7,7 +7,8 @@ class CalcUI(QMainWindow):
 	def __init__(self):
 		super().__init__()
 		self.setWindowTitle("Calculator")
-		#self.setFixedSize(350,350)
+		self.setFixedSize(300,350)
+
 		#currentNum stores numbers pressed
 		#finNum stores the currentNum and the operator pressed
 		self.currentNum = []
@@ -18,22 +19,27 @@ class CalcUI(QMainWindow):
 		self.widget = QWidget(self)
 		self.widget.setLayout(self.container)
 		self.setCentralWidget(self.widget)
+		self.createDisplay()
+		self.createKeypad()
 
-		#Display
+	#GUI of calculator
+	def createDisplay(self):
 		self.display = QLineEdit()
 		self.display.setFixedHeight(50)
 		self.display.setAlignment(Qt.AlignRight)
+		self.display.setReadOnly(True)
 		self.display.setText("0")
 		self.container.addWidget(self.display)
 
-		#Keypad
+	def createKeypad(self):
 		self.keypad = QGridLayout()
+		
+		#Use a dictionary to make it more elegant than this!!
 		buttons = { "9":(0,2), "8":(0,1), "7":(0,0),
 					"6":(1,2), "5":(1,1), "4":(1,0),
 					"3":(2,2), "2":(2,1), "1":(2,0), 
 					"0":(3,1)}
-
-		#Numbers
+		#Buttons
 		btn9 = QPushButton("9", clicked = lambda: self.num_clicked('9'))
 		btn8 = QPushButton("8", clicked = lambda: self.num_clicked('8'))
 		btn7 = QPushButton("7", clicked = lambda: self.num_clicked('7'))
@@ -44,7 +50,6 @@ class CalcUI(QMainWindow):
 		btn2 = QPushButton("2", clicked = lambda: self.num_clicked('2'))
 		btn1 = QPushButton("1", clicked = lambda: self.num_clicked('1'))
 		btn0 = QPushButton("0", clicked = lambda: self.num_clicked('0'))
-		#Operators
 		mult = QPushButton("*", clicked = lambda: self.op_clicked('*'))
 		divd = QPushButton("/", clicked = lambda: self.op_clicked('/'))
 		add = QPushButton("+", clicked = lambda: self.op_clicked('+'))
@@ -88,6 +93,7 @@ class CalcUI(QMainWindow):
 		self.keypad.addWidget(btn0,3,0)
 		self.container.addLayout(self.keypad)
 
+
 	#Functionality of calculator
 	def num_clicked(self, num):
 		#Do not display or count leading zeroes
@@ -104,20 +110,13 @@ class CalcUI(QMainWindow):
 				self.display.setText(''.join(self.finNum) + temp_num)
 			else:
 				self.display.setText(temp_num)
-		print("The number "+num+" was pressed!")
 
 	def op_clicked(self, op):
-		if len(self.currentNum) == 0:
-			self.finNum.append('0'+op)
-			print(self.currentNum)
-		else:
-			print(self.finNum)
+		if len(self.currentNum) != 0:
 			temp_num = ''.join(self.currentNum) + op
 			self.finNum.append(temp_num)
 			self.currentNum = []
-
 		self.display.setText(''.join(self.finNum))
-		print("The operation "+op+" was pressed!")
 
 	def result(self):
 		if len(self.currentNum) == 0 and len(self.finNum) == 0:
