@@ -49,7 +49,7 @@ class Maze{
 			if (recursiveSolver(row-1, col)){
 				return true;//Move Up
 			}
-			maze[row][col] = 6; 
+			maze[row][col] = 1; 
 			return false; //If it makes it here then it is false
 		}
 		return false;
