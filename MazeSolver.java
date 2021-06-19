@@ -10,41 +10,52 @@ import java.util.Arrays;
 
 class MazeSolver{
 	public static void main(String[]arg){
-		
-		Maze path = new Maze();
-		int menu = 0;
-
 		//MENU
-		Scanner in = new Scanner(System.in);
 		System.out.println("Welcome to Maze Solver!");
 		System.out.println("\n1. When importing a textfile, make sure the rows and column lengths are equal");
 		System.out.println("2. Make sure the all the values are either 1s or 0s, where 1s are walkable paths and 0s are walls");
 		System.out.println("3. Values must be separated by commas. Ex. 0,1,0,0\n");
-		System.out.println("Please enter the name of the file with the maze you want to be solved:");
-		//String fileName = in.nextLine();
 
-		//pass filename to generateMaze function
-		path.generateMaze("Maze.txt");
+		do{
+			System.out.println("Please enter the name of the file with the maze you want to be solved:");
+			Scanner in = new Scanner(System.in);
+			String fileName = in.nextLine();
+			System.out.println("");
+			Maze path = new Maze();
 
-		// if(path.recursiveSolver(0,0) == false){
-		// 	System.out.println("You failed to find a way out!");
-		// 	path.displayMaze();
-		// }
-		// else{
-		// 	System.out.println("You made it through!");
-		// 	path.displayMaze();	
-		// }
+			if(path.initMaze(fileName)){
+				if(path.recursiveSolver(0,0) == false){
+					System.out.println("Couldn't find a solution...");
+					path.displayMaze();
+				}
+				else{
+					System.out.println("Found a SOLUTION!");
+					path.displayMaze();	
+				}
+			}
+			else{
+				System.out.println("Please enter a valid txt file.");
+			}
+
+			System.out.println("Do you want to enter a file again? (y/n)");
+			Scanner redo = new Scanner(System.in);
+			String menu = redo.nextLine();
+
+			if (menu.equals("n")){
+				break;
+			}
+
+		} while(true);
 	}
-}
+}// end of MazeSolver
 
 class Maze{
 
 	private int[][] maze;
 	private java.util.ArrayList<Integer> numbers = new java.util.ArrayList<Integer>();
 	private int mazeSize = 0;
-	//make get/set methods for private maze
 
-	public void generateMaze(String fileName){
+	public boolean initMaze(String fileName){
 	
 		//open file and read each line as a row and place into maze
 		try {
@@ -57,18 +68,20 @@ class Maze{
 					numbers.add(Integer.parseInt(line[i])); //add each element into numbers as an int
 				}
 
-				mazeSize++;//determines the size of 2d maze var
+				mazeSize++; //determines the size of 2d maze var
 			
 			}
-			initMaze(); 
+			genMaze(); //populate the 2d array var maze
 			read.close();
+			return true;
 
 		} catch (java.io.FileNotFoundException ex){
-			System.out.println("File does not exist!");
+			System.out.println("File does not exist!\n");
+			return false;
 		}
-	}
+	}// end of initMaze
 
-	private void initMaze(){
+	private void genMaze(){
 		maze = new int[mazeSize][mazeSize];
 		int length = 0;
 		//transfer arraylist elements into 2d array maze
@@ -78,7 +91,13 @@ class Maze{
 				length++;
 			}
 		}
-		displayMaze();
+	}// end of genMaze
+
+	private boolean checkColBounds(int col){
+		return (col >= 0) && (col < maze[0].length);
+	}
+	private boolean checkRowBounds(int row){
+		return (row >= 0) && (row < maze.length);
 	}
 
 	public boolean recursiveSolver(int row, int col){
@@ -109,13 +128,6 @@ class Maze{
 		return false;
 	}// end of recursiveSolver
 
-	private boolean checkColBounds(int col){
-		return (col >= 0) && (col < maze[0].length);
-	}
-	private boolean checkRowBounds(int row){
-		return (row >= 0) && (row < maze.length);
-	}
-
 	public void displayMaze(){
 		for(int i=0; i<maze.length; i++){
 			for(int j=0; j<maze[i].length; j++){
@@ -124,6 +136,5 @@ class Maze{
 			}
 			System.out.println("");
 		}
-	}
-		
+	}//end of displayMaze
 }//end of class Maze
