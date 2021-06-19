@@ -4,7 +4,9 @@ to the bottom right corner using recursion.
 
 0s are walls and 1s are possible pathways
 */
+import java.io.File;
 import java.util.Scanner;
+import java.util.Arrays;
 
 class MazeSolver{
 	public static void main(String[]arg){
@@ -19,29 +21,64 @@ class MazeSolver{
 		System.out.println("2. Make sure the all the values are either 1s or 0s, where 1s are walkable paths and 0s are walls");
 		System.out.println("3. Values must be separated by commas. Ex. 0,1,0,0\n");
 		System.out.println("Please enter the name of the file with the maze you want to be solved:");
-		String fileName = in.nextLine();
-		//pass filename to generateMaze function
-		path.generateMaze(fileName);
+		//String fileName = in.nextLine();
 
-		if(path.recursiveSolver(0,0) == false){
-			System.out.println("You failed to find a way out!");
-			path.displayMaze();
-		}
-		else{
-			System.out.println("You made it through!");
-			path.displayMaze();	
-		}
+		//pass filename to generateMaze function
+		path.generateMaze("Maze.txt");
+
+		// if(path.recursiveSolver(0,0) == false){
+		// 	System.out.println("You failed to find a way out!");
+		// 	path.displayMaze();
+		// }
+		// else{
+		// 	System.out.println("You made it through!");
+		// 	path.displayMaze();	
+		// }
 	}
 }
 
 class Maze{
-	private int[][] maze;
 
+	private int[][] maze;
+	private java.util.ArrayList<Integer> numbers = new java.util.ArrayList<Integer>();
+	private int mazeSize = 0;
 	//make get/set methods for private maze
 
 	public void generateMaze(String fileName){
+	
 		//open file and read each line as a row and place into maze
+		try {
+			Scanner read = new Scanner(new File(fileName));
+			while(read.hasNextLine()){
+				
+				String[] line = read.nextLine().split(",");
 
+				for (int i=0; i<line.length; i++){ 
+					numbers.add(Integer.parseInt(line[i])); //add each element into numbers as an int
+				}
+
+				mazeSize++;//determines the size of 2d maze var
+			
+			}
+			initMaze(); 
+			read.close();
+
+		} catch (java.io.FileNotFoundException ex){
+			System.out.println("File does not exist!");
+		}
+	}
+
+	private void initMaze(){
+		maze = new int[mazeSize][mazeSize];
+		int length = 0;
+		//transfer arraylist elements into 2d array maze
+		for (int j=0; j<mazeSize; j++){
+			for (int i=0; i<mazeSize; i++){
+				maze[j][i] = numbers.get(length);
+				length++;
+			}
+		}
+		displayMaze();
 	}
 
 	public boolean recursiveSolver(int row, int col){
